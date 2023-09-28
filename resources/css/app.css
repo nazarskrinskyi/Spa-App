@@ -1,0 +1,29 @@
+
+
+.error {
+    border: 1px solid;
+    margin: 10px 0;
+    padding: 15px 10px 15px 50px;
+    background-repeat: no-repeat;
+    background-position: 10px center;
+}
+
+.error {
+    color: #D8000C;
+    margin: auto;
+    background-color: #FFBABA;
+
+    /* Flexbox properties */
+    display: flex;
+    justify-content: center; /* Horizontally center content */
+    align-items: center; /* Vertically center content */
+}
+
+     /* Add your CSS styling here */
+ .sorted-asc::after {
+     content: " ▲";
+ }
+
+.sorted-desc::after {
+    content: " ▼";
+}

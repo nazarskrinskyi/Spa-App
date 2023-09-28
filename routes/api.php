@@ -17,3 +17,8 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::group(['namespace' => 'App\Http\Controllers\Api\Comment'], function () {
+    Route::post('/create', StoreController::class);
+    Route::get('/comments', IndexController::class);
+});

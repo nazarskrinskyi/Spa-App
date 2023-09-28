@@ -22,7 +22,7 @@
 
     "devDependencies": {
 
-        "axios": "^1.1.2",
+        "axios": "^1.5.0",
 
         "laravel-mix": "^6.0.49",
 
@@ -34,7 +34,7 @@
 
         "vue-loader": "^17.0.1",
 
-        "vue-router": "^4.2.4"
+        "vue-router": "^4.2.5"
 
     },
 
@@ -42,9 +42,29 @@
 
         "@vitejs/plugin-vue": "^4.2.1",
 
+        "lightbox2": "^2.11.4",
+
+        "primevue": "^3.34.1",
+
         "vue": "^3.2.36",
 
+        "vue-client-recaptcha": "^1.1.4",
+
         "wait-on": "^7.0.1"
+
+    },
+
+    "exports": {
+
+        ".": {
+
+            "import": "./dist/vue-client-recaptcha.es.js",
+
+            "require": "./dist/vue-client-recaptcha.umd.js"
+
+        },
+
+        "./style.css": "./dist/style.css"
 
     }
 

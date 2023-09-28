@@ -58,3 +58,18 @@ npm install --save vue@next && npm install --save-dev vue-loader@next
 ```bash
  npm install vue-router
 ```
+```bash
+ npm install 
+```
+```bash
+npm install vue-client-recaptcha --save
+```
+```bash
+npm install lightbox2 --save
+```
+```bash
+npm install primevue 
+```
+```bash
+composer require predis/predis
+```
