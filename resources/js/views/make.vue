@@ -1,5 +1,8 @@
 <style>
 @import url("/node_modules/vue-client-recaptcha/dist/style.css");
+.ql-editor {
+    min-height: 200px;
+}
 </style>
 
 <template>
@@ -50,7 +53,7 @@
                         url="/api/create"
                         accept="image/*,.txt"
                         @upload="saveFile"
-                        :disabled="fileUploadError !== null || fileUploaded"
+                        :disabled="fileUploadError !== null || isFileInputDisabled"
 
                     />
                 </div>
@@ -59,15 +62,25 @@
 
             <div class="mb-3">
                 <label for="summernote" class="form-label">Content</label>
-                <textarea
-                    type="text"
-                    id="summernote"
-                    class="form-control"
-                    v-model="text"
-                    placeholder="Content..."
-                    autocomplete="on"
-                    required
-                ></textarea>
+                <QuillEditor type="text" theme="snow" id="summernote"
+                             class="form-control"
+                             v-model="content"
+                             ref="quill_content"
+                             placeholder="Content..."
+                             autocomplete="on" toolbar="#my-toolbar" required>
+                    <template #toolbar>
+                        <div id="my-toolbar">
+                            <!-- Add buttons as you would before -->
+                            <button class="ql-bold"></button>
+                            <button class="ql-italic"></button>
+                            <button class="ql-link"></button>
+                            <button class="ql-code"></button>
+
+                            <!-- But you can also add your own -->
+                            <button id="custom-button"></button>
+                        </div>
+                    </template>
+                </QuillEditor>
             </div>
 
             <label for="text" class="form-label">Captcha</label>
@@ -106,7 +119,6 @@
 </template>
 
 
-
 <script setup>
 
 import {useToast} from "primevue/usetoast";
@@ -131,18 +143,19 @@ export default {
         return {
             username: "",
             email: "",
-            text: "",
+            content: '',
             captcha: "",
             file: null,
             selectedFile: null,
             fileUploadError: null, // Add a property for file upload error
             captchaError: null, // Add a property for file upload error
             captchaText: "", // Store the server-generated CAPTCHA text here
-            fileUploaded: false, // Track if a file has been uploaded
             isCaptchaValid: false,
             hasAttemptedCaptcha: false,
+            isFileInputDisabled: false,
         };
     },
+
     methods: {
         getCaptchaCode(value) {
             this.captchaText = value; // Update captchaText directly
@@ -162,16 +175,13 @@ export default {
         },
         saveFile() {
             this.file = this.selectedFile;
-            console.log(this.file);
+            this.isFileInputDisabled = this.file !== null; // Set the reactive data property based on the file status
         },
 
         handleFileUpload() {
             const fileInput = this.$refs.fileInput;
             console.log(fileInput.files)
-            if (this.file !== null) {
-                this.fileUploaded = true;// Set the flag to true after a file is uploaded
-                return;
-            }
+
             if (fileInput.files.length <= 1) {
                 const file = fileInput.files[0];
 
@@ -192,8 +202,7 @@ export default {
                     this.clearFileInput();
                     this.fileUploadError = "Invalid file type or size.";
                 }
-            }
-            else {
+            } else {
                 this.fileUploadError = "You can upload only 1 file";
             }
 
@@ -236,7 +245,7 @@ export default {
                     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
                     canvas.toBlob((blob) => {
-                        const resizedFile = new File([blob], file.name, { type: file.type });
+                        const resizedFile = new File([blob], file.name, {type: file.type});
                         this.fileUploadError = null;
                         console.log('resize')
                         console.log(resizedFile)
@@ -267,20 +276,23 @@ export default {
         handleFileRemove() {
             this.fileUploadError = null;
             this.file = null;
-            console.log(this.fileUploadError)
+            this.isFileInputDisabled = false;
         },
 
         refreshCaptcha() {
             this.captcha = "";
             this.isCaptchaValid = false;
             this.hasAttemptedCaptcha = false;
+            this.captchaText = ""; // Clear the CAPTCHA text
         },
 
         createComment() {
             const formData = new FormData();
+            this.content = this.$refs.quill_content.getHTML();
+            console.log(this.content)
             formData.append("username", this.username);
             formData.append("email", this.email);
-            formData.append("text", this.text);
+            formData.append("text", this.content);
             formData.append("file", this.file);
             console.log(formData)
 

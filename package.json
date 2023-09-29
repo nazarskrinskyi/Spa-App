@@ -42,13 +42,23 @@
 
         "@vitejs/plugin-vue": "^4.2.1",
 
+        "@vueup/vue-quill": "^1.2.0",
+
+        "flowbite": "^1.8.1",
+
+        "flowbite-vue": "^0.0.17-next.13",
+
         "lightbox2": "^2.11.4",
 
         "primevue": "^3.34.1",
 
         "vue": "^3.2.36",
 
+        "vue-awesome-paginate": "^1.1.46",
+
         "vue-client-recaptcha": "^1.1.4",
+
+        "vuejs-paginate-next": "^1.0.2",
 
         "wait-on": "^7.0.1"
 

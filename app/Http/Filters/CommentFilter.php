@@ -23,19 +23,19 @@ class CommentFilter extends AbstractFilter
     public function username(Builder $builder, $value): void
     {
         // Реализуйте фильтрацию по полю 'User Name' (username) по алфавиту
-        $builder->orderBy('username', $value);
+        $builder->orderBy(self::USERNAME, $value);
     }
 
     public function created_at(Builder $builder, $value): void
     {
         // Реализуйте фильтрацию по полю 'Дата добавления' (created_at) по алфавиту
-        $builder->orderBy('created_at', $value);
+        $builder->orderBy(self::CREATED_AT, $value);
     }
 
     public function email(Builder $builder, $value): void
     {
         // Реализуйте фильтрацию по полю 'E-mail' (email) по алфавиту
-        $builder->orderBy('email', $value);
+        $builder->orderBy(self::EMAIL, $value);
     }
 
 

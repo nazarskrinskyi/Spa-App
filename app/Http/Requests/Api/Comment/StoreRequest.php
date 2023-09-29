@@ -25,29 +25,35 @@ class StoreRequest extends FormRequest
             'username' => 'required|alpha_num',
             'email' => 'required|email',
             'home_page' => 'nullable|url',
-            'file' => 'required',
+            'file' => 'nullable|file',
             'parent_id' => 'nullable|exists:comments,id',
             'text' => [
                 'required',
                 'string',
                 function ($attribute, $value, $fail) {
-                    $allowedTags = ['a', 'code', 'i', 'strong'];
+                    // Define allowed HTML tags
+                    $allowedTags = ['a', 'code', 'em', 'strong','p'];
+
+                    // Strip disallowed tags
                     $strippedText = strip_tags($value, '<' . implode('><', $allowedTags) . '>');
                     if (trim($strippedText) !== trim($value)) {
                         $fail('The text contains disallowed HTML tags.');
                     }
+
+                    // Validate XHTML
                     libxml_use_internal_errors(true);
                     $doc = new \DOMDocument();
-                    $doc->loadHTML('<' . implode('><', $allowedTags) . '>' . $value);
+                    $doc->loadHTML('<div>' . $value . '</div>'); // Wrap content in a div for valid HTML parsing
                     $errors = libxml_get_errors();
                     libxml_clear_errors();
+
+                    // Check for XHTML validation errors
                     if (!empty($errors)) {
                         $fail('The text is not valid XHTML.');
                     }
+
                 },
             ],
         ];
     }
-
-
 }

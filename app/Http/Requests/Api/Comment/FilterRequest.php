@@ -22,9 +22,11 @@ class FilterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'username' => 'nullable|alpha_num',
-            'email' => 'nullable|email',
+            'username' => 'nullable',
+            'email' => 'nullable',
             'created_at' => 'nullable',
+            'page' => 'nullable',
+            'per_page' => 'nullable',
         ];
     }
 }

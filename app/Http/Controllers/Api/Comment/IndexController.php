@@ -3,13 +3,20 @@
 namespace App\Http\Controllers\Api\Comment;
 
 use App\Http\Controllers\Controller;
+use App\Http\Filters\CommentFilter;
+use App\Http\Requests\Api\Comment\FilterRequest;
 use App\Models\Comment;
 
 class IndexController extends Controller
 {
-    public function __invoke(): \Illuminate\Http\JsonResponse
+    public function __invoke(FilterRequest $request): \Illuminate\Http\JsonResponse
     {
-        $comments = Comment::orderBy('created_at', 'desc')->paginate(25);
+        $data = $request->validated();
+        $filter = app()->make(CommentFilter::class, ['queryParams' => array_filter($data)]);
+        $comments = Comment::filter($filter)
+            ->orderBy('created_at', 'desc') // Сортировка по умолчанию
+            ->paginate(25);
+
         // Add an asset URL to each comment with a file
         $comments->each(function ($comment) {
             if ($comment->file) {

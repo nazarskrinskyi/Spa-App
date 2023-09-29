@@ -73,3 +73,6 @@ npm install primevue
 ```bash
 composer require predis/predis
 ```
+```bash
+npm install vuejs-paginate-next --save
+```

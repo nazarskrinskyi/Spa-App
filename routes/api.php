@@ -20,5 +20,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::group(['namespace' => 'App\Http\Controllers\Api\Comment'], function () {
     Route::post('/create', StoreController::class);
-    Route::get('/comments', IndexController::class);
+    Route::post('/comments', IndexController::class);
 });

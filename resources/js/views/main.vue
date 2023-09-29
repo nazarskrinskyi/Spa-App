@@ -6,11 +6,20 @@
         <table class="table">
             <thead>
             <tr>
-                <th @click="sortBy('username')" :class="{ 'sorted-asc': sortKey === 'username' && sortOrder === 'asc', 'sorted-desc': sortKey === 'username' && sortOrder === 'desc' }">Username</th>
+                <th @click="sortBy('username')"
+                    :class="{ 'sorted-asc': sortKey === 'username' && sortOrder === 'asc', 'sorted-desc': sortKey === 'username' && sortOrder === 'desc' }">
+                    Username
+                </th>
                 <th>Content</th>
                 <th>Preview</th>
-                <th @click="sortBy('email')" :class="{ 'sorted-asc': sortKey === 'email' && sortOrder === 'asc', 'sorted-desc': sortKey === 'email' && sortOrder === 'desc' }">E-mail</th>
-                <th @click="sortBy('created_at')" :class="{ 'sorted-asc': sortKey === 'created_at' && sortOrder === 'asc', 'sorted-desc': sortKey === 'created_at' && sortOrder === 'desc' }">Created_at</th>
+                <th @click="sortBy('email')"
+                    :class="{ 'sorted-asc': sortKey === 'email' && sortOrder === 'asc', 'sorted-desc': sortKey === 'email' && sortOrder === 'desc' }">
+                    E-mail
+                </th>
+                <th @click="sortBy('created_at')"
+                    :class="{ 'sorted-asc': sortKey === 'created_at' && sortOrder === 'asc', 'sorted-desc': sortKey === 'created_at' && sortOrder === 'desc' }">
+                    Created_at
+                </th>
             </tr>
             </thead>
             <tbody>
@@ -34,27 +43,50 @@
             </tr>
             </tbody>
         </table>
+        <div class="mt-3 d-flex justify-content-center">
+            <paginate
+                :page-count="Math.ceil(totalItems / perPage)"
+                :page-range="3"
+                :margin-pages="2"
+                :click-handler="clickCallback"
+                :prev-text="'Prev'"
+                :next-text="'Next'"
+                :container-class="'pagination'"
+                :page-class="'page-item'"
+                :prev-class="'page-prev'"
+                :next-class="'page-next'"
+            >
+            </paginate>
+        </div>
     </div>
 </template>
 
 
 <script>
+import Paginate from 'vuejs-paginate-next';
+
 lightbox.option({
-    resizeDuration: 200,
+    resizeDuration: 400,
     wrapAround: true,
     disableScrolling: true,
     fitImagesInViewport: false
 })
-export default {
 
+export default {
+    components: {
+        paginate: Paginate,
+    },
     data() {
         return {
             username: "",
             email: "",
             text: "",
             comments: [],
-            sortKey: "created_at",
+            sortKey: 'created_at',
             sortOrder: "desc",
+            currentPage: 1,
+            perPage: 25, // Set the number of items per page as needed
+            totalItems: 0, // Initialize with the total number of items
         };
     },
     computed: {
@@ -66,9 +98,12 @@ export default {
         },
     },
     methods: {
+        clickCallback(pageNum) {
+            this.currentPage = pageNum;
+            this.fetchComments();
+        },
 
         isImage(fileUrl) {
-            console.log('File URL:', fileUrl);
             if (!fileUrl) return false; // Check if fileUrl is undefined or empty
             const imageExtensions = ['.jpg', '.jpeg', '.gif', '.png'];
             const ext = this.getFileExtension(fileUrl);
@@ -89,12 +124,15 @@ export default {
             return '';
         },
         fetchComments() {
-            // Запрос списка комментариев с сервера
-            axios.get("/api/comments")
+            // Calculate the offset based on the current page and perPage
+            axios.post("/api/comments", {
+                [this.sortKey]: this.sortOrder,
+                page: this.currentPage, // Send the current page as a parameter
+                per_page: this.perPage, // Send the number of items per page as a parameter
+            })
                 .then(response => {
-                    console.log(response)
                     this.comments = response.data.data;
-                    console.log(this.comments)
+                    this.totalItems = response.data.total; // Set the total number of items
                 })
                 .catch(error => {
                     console.error(error);
@@ -104,6 +142,7 @@ export default {
             // Изменение параметров сортировки
             this.sortKey = key;
             this.sortOrder = this.sortOrder === "asc" ? "desc" : "asc";
+            this.fetchComments();
         },
         formatDate(date) {
             return new Date(date).toLocaleString(); // Adjust date formatting as needed
